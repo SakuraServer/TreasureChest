@@ -1,0 +1,7 @@
+name: TreasureChest
+main: net.ja731j.TreasureChest.TreasureChestMain
+authors: ['ja731j']
+version: maven-version-number
+commands:
+  treasurechest:
+permissions:
