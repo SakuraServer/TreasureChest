@@ -4,4 +4,6 @@ authors: ['ja731j']
 version: maven-version-number
 commands:
   treasurechest:
+    description: TreasureChest command
+    usage: xP
 permissions:

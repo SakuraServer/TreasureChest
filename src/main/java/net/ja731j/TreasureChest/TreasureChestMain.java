@@ -2,10 +2,12 @@ package net.ja731j.TreasureChest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import net.ja731j.TreasureChest.Commands.ConfigCommands;
 import net.ja731j.TreasureChest.Commands.InventoryCommands;
 import net.ja731j.TreasureChest.Listeners.AbstractListener;
 import net.ja731j.TreasureChest.Listeners.ChestListener;
 import net.ja731j.TreasureChest.Listeners.SignListener;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,8 +38,10 @@ public class TreasureChestMain extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if(cmd.getName().equalsIgnoreCase("TreasureChest")){
             if(args.length>1){
-                if(args[1].equalsIgnoreCase("invenotry")){
+                if(args[0].equalsIgnoreCase("inventory")){
                     return new InventoryCommands().execCommand(sender,cmd,args);
+                }else if(args[0].equalsIgnoreCase("config")){
+                    return new ConfigCommands().execCommand(sender,cmd,args);
                 }
             }
         }

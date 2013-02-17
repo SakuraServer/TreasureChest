@@ -4,11 +4,13 @@
  */
 package net.ja731j.TreasureChest.Commands;
 
+import java.util.List;
 import net.ja731j.TreasureChest.Managers.InventoryManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 /**
  *
@@ -20,7 +22,7 @@ public class InventoryCommands{
         if(!(sender instanceof Player)){
             return false;
         }
-        if(args.length>2){//needs to be at least 3
+        if(args.length<2){//needs to be at least 2
             return false;
         }
         if(args[1].equalsIgnoreCase("create")){
@@ -52,21 +54,28 @@ public class InventoryCommands{
 
     private boolean list(CommandSender sender, Command cmd, String[] args) {
         Player p = (Player)sender;
-        String[] str = (String[])InventoryManager.getInstance().getInventoryIDs().toArray();
+        List<String> idlist = InventoryManager.getInstance().getInventoryIDs();
         p.sendMessage("Showing list of inventories");
-        p.sendMessage(StringUtils.join(str, ", "));
+        p.sendMessage(StringUtils.join(idlist.toArray(), ", "));
         return true;
     }
 
     private boolean edit(CommandSender sender, Command cmd, String[] args) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        Player p = (Player)sender;
+        Inventory inv= InventoryManager.getInstance().getInventory(args[2]);
+        if(inv!=null){
+            p.openInventory(inv);
+            p.sendMessage("Editing inventory:"+args[2]);
+        }else{
+            p.sendMessage("The inventory does not exist");
+        }
+            return true;
     }
 
     private boolean remove(CommandSender sender, Command cmd, String[] args) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-    
-    private String generateID(){
-        throw new UnsupportedOperationException("Not yet implemented");
+        Player p = (Player)sender;
+        InventoryManager.getInstance().removeInventory(args[2]);
+        p.sendMessage("Removed inventory:"+args[2]);
+        return true;
     }
 }

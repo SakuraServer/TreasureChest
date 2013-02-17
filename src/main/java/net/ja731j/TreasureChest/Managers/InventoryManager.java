@@ -12,10 +12,12 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
- * @author ja731j
+ * @author
+ * ja731j
  */
 public class InventoryManager {
 
@@ -32,36 +34,53 @@ public class InventoryManager {
         return instance;
     }
 
-    public String createInventory(){
+    public String createInventory() {
         return addInventory(null);
     }
-    
-    public String createInventory(String id){
-        addInventory(null,id);
+
+    public String createInventory(String id) {
+        addInventory(null, id);
         return id;
     }
-    
+
     public String addInventory(Inventory inv) {
         String id = generateID();
         addInventory(inv, id);
         return id;
     }
 
-    public boolean addInventory(Inventory inv, String id) {
+    public String addInventory(Inventory inv, String id) {
         if (inv == null) {
             inv = Bukkit.createInventory(null, InventoryType.CHEST);
         }
         if (id.length() > 15) {
-            return false;
+            return null;
         }
         inventories.put(id, inv);
-        return true;
+        return id;
     }
+
     public Inventory getInventory(String id) {
         if (id.length() > 15) {
             return null;
         } else {
             return inventories.get(id);
+        }
+    }
+
+    public Inventory getInventoryCopy(String id) {
+        if (id.length() > 15) {
+            return null;
+        } else {
+            Inventory original = getInventory(id);
+            Inventory copy = Bukkit.createInventory(null, InventoryType.CHEST);
+
+            for (ItemStack stack : original.getContents()) {
+                if (stack != null) {
+                    copy.addItem(stack);
+                }
+            }
+            return copy;
         }
     }
 
@@ -73,15 +92,20 @@ public class InventoryManager {
         return true;
     }
 
-    public List getInventoryIDs(){
-         return Arrays.asList(inventories.keySet().toArray());
+    public List<String> getInventoryIDs() {
+        String[] str = inventories.keySet().toArray(new String[0]);
+        return new ArrayList<String>(Arrays.asList(str));
     }
-    
+
     private String generateID() {
         String id = RandomStringUtils.randomAlphanumeric(15);
         while (inventories.containsKey(id)) {
             id = RandomStringUtils.randomAlphanumeric(15);
         }
         return id;
+    }
+
+    public boolean exists(String id) {
+        return inventories.containsKey(id);
     }
 }
