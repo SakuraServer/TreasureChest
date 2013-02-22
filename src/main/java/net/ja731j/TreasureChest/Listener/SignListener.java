@@ -2,24 +2,25 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.ja731j.TreasureChest.Listeners;
+package net.ja731j.TreasureChest.Listener;
 
 import java.util.ArrayList;
+import net.ja731j.TreasureChest.TreasureChestMain;
 import net.ja731j.TreasureChest.Utils;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
- * @author ja731j
+ * @author
+ * ja731j
  */
 public class SignListener extends AbstractListener {
 
-    public SignListener(Plugin plugin) {
+    public SignListener(TreasureChestMain plugin) {
         super(plugin);
     }
 
@@ -49,8 +50,8 @@ public class SignListener extends AbstractListener {
             }
         }
     }
-    
-    private void cancellEvent(SignChangeEvent event,String reason){
+
+    private void cancellEvent(SignChangeEvent event, String reason) {
         event.setCancelled(true);
         Player player = event.getPlayer();
         player.sendMessage(reason);

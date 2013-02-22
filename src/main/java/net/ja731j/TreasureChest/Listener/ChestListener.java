@@ -2,11 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.ja731j.TreasureChest.Listeners;
+package net.ja731j.TreasureChest.Listener;
 
 import java.util.ArrayList;
-import net.ja731j.TreasureChest.Managers.ConfigManager;
-import net.ja731j.TreasureChest.Managers.InventoryManager;
+import net.ja731j.TreasureChest.Manager.ConfigManager;
+import net.ja731j.TreasureChest.Manager.InventoryManager;
+import net.ja731j.TreasureChest.TreasureChestMain;
 import net.ja731j.TreasureChest.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Chest;
@@ -16,8 +17,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -26,7 +25,10 @@ import org.bukkit.plugin.Plugin;
  */
 public class ChestListener extends AbstractListener {
 
-    public ChestListener(Plugin plugin) {
+    ConfigManager cfgManager = plugin.getManager(ConfigManager.class);
+    InventoryManager invManager = plugin.getManager(InventoryManager.class);
+
+    public ChestListener(TreasureChestMain plugin) {
         super(plugin);
     }
 
@@ -50,9 +52,9 @@ public class ChestListener extends AbstractListener {
                 Inventory tcInv;
                 if (!sign.getLine(1).isEmpty()) {
                     String configId = sign.getLine(1);
-                    if (ConfigManager.getInstance().exists(configId)) {
-                        String masterInvId = ConfigManager.getInstance().getConfig(configId).chooseInventoryID();
-                        tcInv = InventoryManager.getInstance().getInventoryCopy(masterInvId);
+                    if (cfgManager.exists(configId)) {
+                        String masterInvId = cfgManager.getConfig(configId).chooseInventoryID();
+                        tcInv = invManager.getInventoryCopy(masterInvId);
                     } else {
                         tcInv = Bukkit.createInventory(null, InventoryType.CHEST);
                     }

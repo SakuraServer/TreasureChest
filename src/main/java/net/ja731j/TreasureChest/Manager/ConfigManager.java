@@ -2,34 +2,26 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.ja731j.TreasureChest.Managers;
+package net.ja731j.TreasureChest.Manager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import net.ja731j.TreasureChest.Config;
 import org.apache.commons.lang.RandomStringUtils;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 /**
  *
  * @author
  * ja731j
  */
-public class ConfigManager {
+public class ConfigManager extends Manager implements ConfigurationSerializable{
 
-    private HashMap<String, Config> configs=new HashMap<String,Config>();
-    private static ConfigManager instance = null;
-
-    private ConfigManager() {
-    }
-
-    public static ConfigManager getInstance() {
-        if (instance == null) {
-            instance = new ConfigManager();
-        }
-        return instance;
-    }
+    private HashMap<String, Config> configs = new HashMap<String, Config>();
 
     public String createConfig() {
         return addConfig(new Config());
@@ -85,5 +77,23 @@ public class ConfigManager {
 
     public boolean exists(String id) {
         return configs.containsKey(id);
+    }
+
+    public Map<String, Object> serialize() {
+        Map<String, Object> result = new HashMap<String, Object>();
+        for (Entry<String, Config> e : configs.entrySet()) {
+            result.put(e.getKey(), e.getValue().serialize());
+        }
+        return result;
+    }
+        public static ConfigManager deserialize(Map<String, Object> args) {
+        ConfigManager result = new ConfigManager();
+        for (Entry<String, Object> e : args.entrySet()) {
+            if (e.getValue() instanceof Map) {
+                Map<String, Object> map = (Map) e.getValue();
+                result.addConfig(new Config(map), e.getKey());
+            }
+        }
+        return result;
     }
 }

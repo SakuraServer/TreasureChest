@@ -5,21 +5,27 @@
 package net.ja731j.TreasureChest;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
-import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 /**
  *
  * @author ja731j
  */
-public class Config {
+public class Config implements ConfigurationSerializable {
 
     private HashMap<String, Short> priorityMap=new HashMap<String, Short>();
-    private SecureRandom rnd = new SecureRandom();
+    static private final SecureRandom rnd = new SecureRandom();
     public Config() {
+    }
+    
+    public Config(Map<String,Object> args){
+        for(Entry<String,Object> e: args.entrySet()){
+            if(e.getValue()instanceof Short);
+            this.addInventorySetting(e.getKey(), (Short)e.getValue());
+        }
     }
 
     public boolean addInventorySetting(String id, Short priority){
@@ -63,5 +69,9 @@ public class Config {
                 }
             }
         throw new RuntimeException();
+    }
+
+    public Map<String, Object> serialize() {
+        return (Map)priorityMap;
     }
 }

@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.ja731j.TreasureChest.Listeners;
+package net.ja731j.TreasureChest.Listener;
 
+import net.ja731j.TreasureChest.TreasureChestMain;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 
 /**
  *
@@ -13,9 +13,9 @@ import org.bukkit.plugin.Plugin;
  */
 public abstract class AbstractListener implements Listener {
 
-    protected Plugin plugin;
+    protected TreasureChestMain plugin;
 
-    public AbstractListener(Plugin plugin) {
+    public AbstractListener(TreasureChestMain plugin) {
         this.plugin = plugin;
     }
 
