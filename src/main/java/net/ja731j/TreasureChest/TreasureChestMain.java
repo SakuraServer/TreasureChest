@@ -22,6 +22,7 @@ import net.ja731j.TreasureChest.Listener.SignListener;
 import net.ja731j.TreasureChest.Manager.ConfigManager;
 import net.ja731j.TreasureChest.Manager.InventoryManager;
 import net.ja731j.TreasureChest.Manager.Manager;
+import net.ja731j.TreasureChest.Manager.TimeManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -51,7 +52,8 @@ public class TreasureChestMain extends JavaPlugin{
         //register managers
         ArrayList<Manager> managers = new ArrayList<Manager>(Arrays.asList(new Manager[]{
         new ConfigManager(),
-        new InventoryManager()}));
+        new InventoryManager(),
+        new TimeManager()}));
         
                 managerMap = new HashMap<String,Manager>();
         for(Manager manager:managers){
@@ -121,7 +123,6 @@ public class TreasureChestMain extends JavaPlugin{
     private void load() {
         try{
         File folder = this.getDataFolder();
-        Map<String,Object> savedata;
         File savefile = new File(folder,"save.dat");
         if(savefile.exists()){
             FileInputStream fis = new FileInputStream(savefile);
@@ -151,7 +152,6 @@ public class TreasureChestMain extends JavaPlugin{
     private void save(){
         try{
         File folder = this.getDataFolder();
-        Map<String,Object> savedata;
         File savefile = new File(folder,"save.dat");
         if(!savefile.exists()){
             savefile.createNewFile();

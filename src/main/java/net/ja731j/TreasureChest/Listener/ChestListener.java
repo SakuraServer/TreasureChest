@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import net.ja731j.TreasureChest.Config;
 import net.ja731j.TreasureChest.Manager.ConfigManager;
 import net.ja731j.TreasureChest.Manager.InventoryManager;
+import net.ja731j.TreasureChest.Manager.TimeManager;
 import net.ja731j.TreasureChest.TreasureChestMain;
 import net.ja731j.TreasureChest.Utils;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
@@ -27,6 +29,7 @@ public class ChestListener extends AbstractListener {
 
     ConfigManager cfgManager = plugin.getManager(ConfigManager.class);
     InventoryManager invManager = plugin.getManager(InventoryManager.class);
+    TimeManager timeManager = plugin.getManager(TimeManager.class);
 
     public ChestListener(TreasureChestMain plugin) {
         super(plugin);
@@ -37,6 +40,7 @@ public class ChestListener extends AbstractListener {
         InventoryHolder holder = event.getInventory().getHolder();
         if (holder instanceof Chest) {
             Chest chest = (Chest) holder;
+            String palyerName = event.getPlayer().getName();
 
             //Get neighboring signs containing "[TreasureChest]" in the first line
             ArrayList<Sign> signs = new ArrayList<Sign>();
@@ -61,10 +65,14 @@ public class ChestListener extends AbstractListener {
             }
             
             Config cfg = cfgManager.getConfig(configId);
-            if(!cfg.isEnabled()){
+            if(!cfg.isEnabled()){ //Don't proceed if it's disabled
                 return;
             }
-
+            
+            if(!timeManager.isAccessable(sign.getLocation(), palyerName)){
+                return;
+            }
+            
             String masterInvId = cfg.chooseInventoryID();
             Inventory targetInv = chest.getBlockInventory();
             Inventory tcInv = invManager.getInventoryCopy(masterInvId);
@@ -92,6 +100,11 @@ public class ChestListener extends AbstractListener {
             
             for(ItemStack stack:tcInv){
                 targetInv.addItem(stack);
+            }
+            
+            //Add chest access info
+            if(cfg.hasInterval()){
+                timeManager.addAccessInfo(System.currentTimeMillis()+cfg.getInterval()*60*1000, sign.getLocation(), palyerName);
             }
             
         }

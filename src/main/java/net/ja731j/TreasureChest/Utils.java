@@ -5,6 +5,11 @@
 package net.ja731j.TreasureChest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -49,5 +54,21 @@ public class Utils {
         return list;
     }
     
+    static public Map<String,Object> serializeLocation(Location loc){
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("World", loc.getWorld().getName());
+        result.put("X", Double.toString(loc.getX()));
+        result.put("Y", Double.toString(loc.getY()));
+        result.put("Z", Double.toString(loc.getZ()));
+        return result;
+    }
     
+    static public Location deserializeLocation(Map<String,Object> map){
+        String worldName = (String)map.get("World");
+        World w = Bukkit.getWorld(worldName);
+        double x = Double.parseDouble((String)map.get("X"));
+        double y = Double.parseDouble((String)map.get("Y"));
+        double z = Double.parseDouble((String)map.get("Z"));
+        return new Location(w, x, y, z);
+    }
 }
