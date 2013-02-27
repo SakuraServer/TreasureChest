@@ -49,11 +49,14 @@ public class ConfigCommandExecutor extends AbstractCommandExecutor {
             return show(sender, subCmdArgs);
         } else if (cmd.equalsIgnoreCase("addSetting")) {
             return addSetting(sender, subCmdArgs);
+        } else if (cmd.equalsIgnoreCase("enable")) {
+            return enable(sender, subCmdArgs);
+        } else if (cmd.equalsIgnoreCase("reset")) {
+            return reset(sender, subCmdArgs);
         } else if (cmd.equalsIgnoreCase("removeSetting")) {
             return removeSetting(sender, subCmdArgs);
         } else if (cmd.equalsIgnoreCase("remove")) {
             return remove(sender, subCmdArgs);
-
         }
         return true;
     }
@@ -158,5 +161,53 @@ public class ConfigCommandExecutor extends AbstractCommandExecutor {
     @Override
     public String getCommandName() {
         return "config";
+    }
+
+    private boolean enable(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            return false;
+        }
+        String cfgID = args[0];
+        String enable = args[1];
+
+        Config cfg = cfgManager.getConfig(cfgID);
+        if (cfg == null) {
+            sender.sendMessage("Config " + cfgID + " does not exist!");
+            return true;
+        }
+
+        if (enable.equalsIgnoreCase("true")) {
+            cfg.setEnable(true);
+            sender.sendMessage("Config " + cfgID + " is enabled!");
+        } else {
+            cfg.setEnable(true);
+            sender.sendMessage("Config " + cfgID + " is disabled!");
+        }
+        
+        return true;
+    }
+
+    private boolean reset(CommandSender sender, String[] args) {
+                if (args.length < 2) {
+            return false;
+        }
+        String cfgID = args[0];
+        String willreset = args[1];
+
+        Config cfg = cfgManager.getConfig(cfgID);
+        if (cfg == null) {
+            sender.sendMessage("Config " + cfgID + " does not exist!");
+            return true;
+        }
+
+        if (willreset.equalsIgnoreCase("false")) {
+            cfg.setEnable(true);
+            sender.sendMessage("Config " + cfgID + " will reset its contents when opened!");
+        } else {
+            cfg.setEnable(true);
+            sender.sendMessage("Config " + cfgID + " will not reset its contents when opened!");
+        }
+        
+        return true;
     }
 }

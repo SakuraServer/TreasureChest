@@ -96,4 +96,5 @@ public class ConfigManager extends Manager implements ConfigurationSerializable{
         }
         return result;
     }
+
 }

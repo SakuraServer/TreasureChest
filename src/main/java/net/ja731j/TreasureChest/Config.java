@@ -17,6 +17,9 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 public class Config implements ConfigurationSerializable {
 
     private HashMap<String, Short> priorityMap=new HashMap<String, Short>();
+    private boolean enable = false;
+    private boolean reset = false;
+    
     static private final SecureRandom rnd = new SecureRandom();
     public Config() {
     }
@@ -73,5 +76,17 @@ public class Config implements ConfigurationSerializable {
 
     public Map<String, Object> serialize() {
         return (Map)priorityMap;
+    }
+
+    public boolean isEnabled() {
+        return enable;
+    }
+
+    public boolean isReset() {
+        return reset;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 }

@@ -2,10 +2,8 @@ package net.ja731j.TreasureChest;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,7 +22,6 @@ import net.ja731j.TreasureChest.Listener.SignListener;
 import net.ja731j.TreasureChest.Manager.ConfigManager;
 import net.ja731j.TreasureChest.Manager.InventoryManager;
 import net.ja731j.TreasureChest.Manager.Manager;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;

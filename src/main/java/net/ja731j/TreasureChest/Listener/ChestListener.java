@@ -5,18 +5,18 @@
 package net.ja731j.TreasureChest.Listener;
 
 import java.util.ArrayList;
+import net.ja731j.TreasureChest.Config;
 import net.ja731j.TreasureChest.Manager.ConfigManager;
 import net.ja731j.TreasureChest.Manager.InventoryManager;
 import net.ja731j.TreasureChest.TreasureChestMain;
 import net.ja731j.TreasureChest.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 /**
  *
@@ -46,24 +46,54 @@ public class ChestListener extends AbstractListener {
                 }
             }
 
-            if (!signs.isEmpty()) {
-                Sign sign = signs.get(0);
-                event.setCancelled(true);
-                Inventory tcInv;
-                if (!sign.getLine(1).isEmpty()) {
-                    String configId = sign.getLine(1);
-                    if (cfgManager.exists(configId)) {
-                        String masterInvId = cfgManager.getConfig(configId).chooseInventoryID();
-                        tcInv = invManager.getInventoryCopy(masterInvId);
-                    } else {
-                        tcInv = Bukkit.createInventory(null, InventoryType.CHEST);
-                    }
-                } else {
-                    tcInv = Bukkit.createInventory(null, InventoryType.CHEST);
-                }
-                event.getPlayer().openInventory(tcInv);
+            if (signs.isEmpty()) { //Only proceed if it's a Treasure Chest
+                return;
             }
 
+            Sign sign = signs.get(0); //Theoretically, there should be only one sign anyway
+            if (sign.getLine(1).isEmpty()) { //Only proceed if a ID is specified
+                return;
+            }
+
+            String configId = sign.getLine(1);
+            if (!cfgManager.exists(configId)) { //Don't do anything if the config doesn't exist
+                return;
+            }
+            
+            Config cfg = cfgManager.getConfig(configId);
+            if(!cfg.isEnabled()){
+                return;
+            }
+
+            String masterInvId = cfg.chooseInventoryID();
+            Inventory targetInv = chest.getBlockInventory();
+            Inventory tcInv = invManager.getInventoryCopy(masterInvId);
+
+            //count empty slots;
+            int emptySlots = 0;
+            for (ItemStack stack : targetInv.getContents()) {
+                if (stack == null) {
+                    emptySlots++;
+                }
+            }
+
+            //count contents
+            int contents = 0;
+            for (ItemStack stack : tcInv) {
+                if (stack != null) {
+                    emptySlots++;
+                }
+            }
+
+            //If the target chest doesn't have enough empty slots just simply delete all of the contents
+            if(cfg.isReset() ||(contents>emptySlots)){
+                targetInv.clear();
+            }
+            
+            for(ItemStack stack:tcInv){
+                targetInv.addItem(stack);
+            }
+            
         }
     }
 }
