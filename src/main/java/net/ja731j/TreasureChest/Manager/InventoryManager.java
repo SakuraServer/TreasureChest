@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import net.ja731j.TreasureChest.TreasureChestMain;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -23,8 +24,11 @@ import org.bukkit.inventory.ItemStack;
  * @author
  * ja731j
  */
-public class InventoryManager extends Manager implements ConfigurationSerializable {
+public class InventoryManager extends Manager {
 
+    public InventoryManager(TreasureChestMain plugin) {
+        super(plugin);
+    }
     private HashMap<String, Inventory> inventories = new HashMap<String, Inventory>();
 
     public String createInventory() {
@@ -102,43 +106,38 @@ public class InventoryManager extends Manager implements ConfigurationSerializab
         return inventories.containsKey(id);
     }
 
-    public Map<String, Object> serialize() {
-        Map<String, Object> result = new HashMap<String, Object>();
+    @Override
+    public Object save() {
+        HashMap<String, Map<Integer, Map<String, Object>>> result = new HashMap<String, Map<Integer, Map<String, Object>>>();
         for (Entry<String, Inventory> e : inventories.entrySet()) {
             ListIterator<ItemStack> invItr = e.getValue().iterator();
-            Map<String, Object> invMap = new HashMap<String, Object>();
+            Map<Integer, Map<String, Object>> invMap = new HashMap<Integer, Map<String, Object>>();
             while (invItr.hasNext()) {
-                invMap.put(Integer.toString(invItr.nextIndex()), invItr.next().serialize());
+                int index = invItr.nextIndex();
+                ItemStack stack = invItr.next();
+                if (stack == null) {
+                    continue;
+                }
+                invMap.put(index, stack.serialize());
             }
             result.put(e.getKey(), invMap);
         }
         return result;
     }
 
-    public static InventoryManager deserialize(Map<String, Object> args) {
-        InventoryManager invManager = new InventoryManager();
-        //for each inventory
-        for (Entry<String, Object> managerEntry : args.entrySet()) {
-            String invId = managerEntry.getKey();
-            //deserialize inventory
-            Inventory inventory = Bukkit.createInventory(null, InventoryType.CHEST);
-            if (!(managerEntry instanceof Map)) {
-                break;
-            }
-            Map<String, Object> invMap = (Map) managerEntry;
-            for (Entry<String, Object> invEntry : invMap.entrySet()) { 
-                if (!(invEntry.getValue() instanceof Map)) {
-                    break;
+    @Override
+    public void load(Object obj) {
+        if (obj instanceof HashMap) {
+            HashMap<String, Map<Integer, Map<String, Object>>> source = (HashMap<String, Map<Integer, Map<String, Object>>>)obj;
+            HashMap<String, Inventory> result = new HashMap<String, Inventory>();
+            for(Entry<String, Map<Integer, Map<String, Object>>> invEntry:source.entrySet()){
+                Inventory inv = Bukkit.createInventory(null, InventoryType.CHEST);
+                for(Entry<Integer, Map<String, Object>> stackEntry: invEntry.getValue().entrySet()){
+                    inv.setItem(stackEntry.getKey(), ItemStack.deserialize(stackEntry.getValue()));
                 }
-                Map<String, Object> stack = (Map<String, Object>) invEntry.getValue();
-                if (inventory.firstEmpty() != -1 && stack != null) {
-                    inventory.addItem(ItemStack.deserialize(stack));
-
-                }
+                result.put(invEntry.getKey(), inv);
             }
-            invManager.addInventory(inventory, invId);
+            inventories = result;
         }
-        return invManager;
-
     }
 }

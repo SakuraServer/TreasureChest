@@ -38,6 +38,10 @@ public class ConfigCommandExecutor extends AbstractCommandExecutor {
         if (args.length < 1) {//needs to be at least 1
             return false;
         }
+        if (!sender.hasPermission("treasurechest.all")) {
+            sender.sendMessage("You do not have the permission to use this command!");
+            return true;
+        }
         String cmd = args[0];
         String[] subCmdArgs;
         subCmdArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -53,6 +57,8 @@ public class ConfigCommandExecutor extends AbstractCommandExecutor {
             return enable(sender, subCmdArgs);
         } else if (cmd.equalsIgnoreCase("reset")) {
             return reset(sender, subCmdArgs);
+        } else if (cmd.equalsIgnoreCase("interval")) {
+            return interval(sender, subCmdArgs);
         } else if (cmd.equalsIgnoreCase("removeSetting")) {
             return removeSetting(sender, subCmdArgs);
         } else if (cmd.equalsIgnoreCase("remove")) {
@@ -91,7 +97,11 @@ public class ConfigCommandExecutor extends AbstractCommandExecutor {
         if (args.length < 2) {
             return false;
         } else if (args.length > 2) {
-            priority = Short.parseShort(args[2]);
+            try {
+                priority = Short.parseShort(args[2]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage("Could not parse " + args[2] + " to a number!");
+            }
         }
         invID = args[1];
         cfgID = args[0];
@@ -180,15 +190,15 @@ public class ConfigCommandExecutor extends AbstractCommandExecutor {
             cfg.setEnable(true);
             sender.sendMessage("Config " + cfgID + " is enabled!");
         } else {
-            cfg.setEnable(true);
+            cfg.setEnable(false);
             sender.sendMessage("Config " + cfgID + " is disabled!");
         }
-        
+
         return true;
     }
 
     private boolean reset(CommandSender sender, String[] args) {
-                if (args.length < 2) {
+        if (args.length < 2) {
             return false;
         }
         String cfgID = args[0];
@@ -201,13 +211,40 @@ public class ConfigCommandExecutor extends AbstractCommandExecutor {
         }
 
         if (willreset.equalsIgnoreCase("false")) {
-            cfg.setEnable(true);
-            sender.sendMessage("Config " + cfgID + " will reset its contents when opened!");
+            cfg.setEnable(false);
+            sender.sendMessage("Config " + cfgID + " will not reset its contents when opened!");
         } else {
             cfg.setEnable(true);
-            sender.sendMessage("Config " + cfgID + " will not reset its contents when opened!");
+            sender.sendMessage("Config " + cfgID + " will reset its contents when opened!");
         }
-        
+
+        return true;
+    }
+
+    private boolean interval(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            return false;
+        }
+        String cfgID = args[0];
+        int interval;
+        try {
+            interval = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage("Could not parse " + args[1] + " to a number!");
+            return true;
+        }
+        if(interval<0){
+            sender.sendMessage("Interval must be the same or larger than 0!");
+        }
+
+        Config cfg = cfgManager.getConfig(cfgID);
+        if (cfg == null) {
+            sender.sendMessage("Config " + cfgID + " does not exist!");
+            return true;
+        }
+
+        cfg.setInterval(interval);
+
         return true;
     }
 }

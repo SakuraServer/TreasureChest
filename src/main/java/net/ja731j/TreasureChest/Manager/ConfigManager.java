@@ -8,19 +8,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import net.ja731j.TreasureChest.Config;
+import net.ja731j.TreasureChest.TreasureChestMain;
 import org.apache.commons.lang.RandomStringUtils;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 /**
  *
  * @author
  * ja731j
  */
-public class ConfigManager extends Manager implements ConfigurationSerializable{
+public class ConfigManager extends Manager {
 
+    public ConfigManager(TreasureChestMain plugin) {
+        super(plugin);
+    }
     private HashMap<String, Config> configs = new HashMap<String, Config>();
 
     public String createConfig() {
@@ -79,22 +80,15 @@ public class ConfigManager extends Manager implements ConfigurationSerializable{
         return configs.containsKey(id);
     }
 
-    public Map<String, Object> serialize() {
-        Map<String, Object> result = new HashMap<String, Object>();
-        for (Entry<String, Config> e : configs.entrySet()) {
-            result.put(e.getKey(), e.getValue().serialize());
-        }
-        return result;
-    }
-        public static ConfigManager deserialize(Map<String, Object> args) {
-        ConfigManager result = new ConfigManager();
-        for (Entry<String, Object> e : args.entrySet()) {
-            if (e.getValue() instanceof Map) {
-                Map<String, Object> map = (Map) e.getValue();
-                result.addConfig(new Config(map), e.getKey());
-            }
-        }
-        return result;
+    @Override
+    public Object save() {
+        return configs;
     }
 
+    @Override
+    public void load(Object obj) {
+        if (obj instanceof HashMap) {
+            configs = (HashMap<String, Config>) obj;
+        }
+    }
 }

@@ -21,7 +21,7 @@ import org.bukkit.inventory.Inventory;
 public class InventoryCommandExecutor extends AbstractCommandExecutor {
 
     InventoryManager invManager = plugin.getManager(InventoryManager.class);
-    
+
     public InventoryCommandExecutor(TreasureChestMain plugin) {
         super(plugin);
     }
@@ -33,9 +33,13 @@ public class InventoryCommandExecutor extends AbstractCommandExecutor {
         if (args.length < 1) {//needs to be at least 1
             return false;
         }
+        if (!sender.hasPermission("treasurechest.all")) {
+            sender.sendMessage("You do not have the permission to use this command!");
+            return true;
+        }
         String cmd = args[0];
         String[] subCmdArgs;
-            subCmdArgs = Arrays.copyOfRange(args, 1, args.length);
+        subCmdArgs = Arrays.copyOfRange(args, 1, args.length);
         if (cmd.equalsIgnoreCase("create")) {
             return create(sender, subCmdArgs);
         } else if (cmd.equalsIgnoreCase("list")) {
@@ -44,9 +48,7 @@ public class InventoryCommandExecutor extends AbstractCommandExecutor {
             return edit(sender, subCmdArgs);
         } else if (cmd.equalsIgnoreCase("remove")) {
             return remove(sender, subCmdArgs);
-
         }
-
         return false;
     }
 

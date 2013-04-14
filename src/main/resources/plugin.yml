@@ -1,9 +1,28 @@
 name: TreasureChest
 main: net.ja731j.TreasureChest.TreasureChestMain
 authors: ['ja731j']
-version: maven-version-number
+version: 1.0-SNAPSHOT
 commands:
   treasurechest:
     description: TreasureChest command
-    usage: xP
+    permission: treasurechest.all
+    usage: |
+      Usage:
+      /treasurechest inventory create [inventoryID]
+      /treasurechest inventory list
+      /treasurechest inventory edit <inventoryID>
+      /treasurechest inventory remove <inventoryID>
+      /treasurechest config create [configID]
+      /treasurechest config list
+      /treasurechest config show <configID>
+      /treasurechest config addSetting <configID> <inventoryID> [priority]
+      /treasurechest config enable <configID> <true,false>
+      /treasurechest config reset <configID> <true,false>
+      /treasurechest config interval <configID> <interval>
+      /treasurechest config removeSetting <configID> <inventoryID>
+      /treasurechest config remove <configID>
+      
 permissions:
+  treasurechest.all:
+    description: All of the permissions for treasurechest command
+    default: op
